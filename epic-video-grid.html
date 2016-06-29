@@ -2,95 +2,102 @@
 <link rel="import" href="../marked-element/marked-element.html" />
 
 <dom-module id="epic-video-grid">
-  <template>
-    <style>
-      :host {
-        display: block;
-        background: transparent;
-      }
-      .header {
-        text-align: center;
-      }
-      .wrapper {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: flex-start;
-      }
-      .video {
-        border: 1px solid #eee;
-        display: inline-block;
-        flex-basis: 30%;
-        margin: 1.666%;
-        box-sizing: border-box;
-      }
-      .video .embed-container {
-          position: relative;
-          padding-bottom: 56.25%;
-          height: 0;
-          overflow: hidden;
-          width: 100%;
-          margin: 0 auto
-      }
-      .embed-container embed,
-      .embed-container iframe,
-      .embed-container object {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%
-      }
-      .details {
-        padding: 1em;
-      }
-      @media screen and (max-width: 991px) {
-        .video {
-          flex-basis: 40%;
-          margin: 5%;
-        }
-      }
-      @media screen and (max-width: 599px) {
-          .video {
-              flex-basis: 90%;
-          }
-          .video .details marked-element {
-            display: none;
-          }
-      }
-    </style>
-    <content></content>
-    <div class="wrapper">
-      <template is="dom-repeat" items="[[videos]]">
-        <div class="video">
-          <div class="embed-container">
-            <iframe src="[[item.embedUrl]]" allowfullscreen frameborder="0"></iframe>
-          </div>
-          <div class="details">
-            <h3>[[item.title]]</h3>
-            <marked-element markdown="[[item.description]]"></marked-element>
-          </div>
+    <template>
+        <style>
+            :host {
+                display: block;
+                background: transparent;
+            }
+
+            .header {
+                text-align: center;
+            }
+
+            .wrapper {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: flex-start;
+            }
+
+            .video {
+                border: 1px solid #eee;
+                display: inline-block;
+                flex-basis: 30%;
+                margin: 1.666%;
+                box-sizing: border-box;
+            }
+
+            .video .embed-container {
+                position: relative;
+                padding-bottom: 56.25%;
+                height: 0;
+                overflow: hidden;
+                width: 100%;
+                margin: 0 auto
+            }
+
+            .embed-container embed,
+            .embed-container iframe,
+            .embed-container object {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%
+            }
+
+            .details {
+                padding: 1em;
+            }
+
+            @media screen and (max-width: 991px) {
+                .video {
+                    flex-basis: 40%;
+                    margin: 5%;
+                }
+            }
+
+            @media screen and (max-width: 599px) {
+                .video {
+                    flex-basis: 90%;
+                }
+                .video .details marked-element {
+                    display: none;
+                }
+            }
+        </style>
+        <content></content>
+        <div class="wrapper">
+            <template is="dom-repeat" items="[[videos]]">
+                <div class="video">
+                    <div class="embed-container">
+                        <iframe src="[[item.embedUrl]]" allowfullscreen frameborder="0"></iframe>
+                    </div>
+                    <div class="details">
+                        <h3>[[item.title]]</h3>
+                        <marked-element markdown="[[item.description]]"></marked-element>
+                    </div>
+                </div>
+            </template>
         </div>
-      </template>
-    </div>
-  </template>
+    </template>
 
-  <script>
-    Polymer({
+    <script>
+        Polymer({
 
-      is: 'epic-video-grid',
+            is: 'epic-video-grid',
 
-      properties: {
-        videos: {
-          type: Array,
-          value: function() {
-            return [];
-          }
-        }
-      },
+            properties: {
+                videos: {
+                    type: Array,
+                    value: function() {
+                        return [];
+                    }
+                }
+            },
 
-      ready: function() {
-
-      }
-    });
-  </script>
+            ready: function() {
+            }
+        });
+    </script>
 </dom-module>
