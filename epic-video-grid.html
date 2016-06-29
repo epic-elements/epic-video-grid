@@ -43,17 +43,31 @@
       .details {
         padding: 1em;
       }
+      @media screen and (max-width: 991px) {
+        .video {
+          flex-basis: 40%;
+          margin: 5%;
+        }
+      }
+      @media screen and (max-width: 599px) {
+          .video {
+              flex-basis: 90%;
+          }
+          .video .details marked-element {
+            display: none;
+          }
+      }
     </style>
     <content></content>
     <div class="wrapper">
-      <template is="dom-repeat" items="{{videos}}">
+      <template is="dom-repeat" items="[[videos]]">
         <div class="video">
           <div class="embed-container">
-            <iframe src="{{item.embedUrl}}" allowfullscreen frameborder="0"></iframe>
+            <iframe src="[[item.embedUrl]]" allowfullscreen frameborder="0"></iframe>
           </div>
           <div class="details">
-            <h3>{{item.title}}</h3>
-            <marked-element markdown="{{item.description}}"></marked-element>
+            <h3>[[item.title]]</h3>
+            <marked-element markdown="[[item.description]]"></marked-element>
           </div>
         </div>
       </template>
@@ -71,13 +85,6 @@
           value: function() {
             return [];
           }
-        },
-        selectedVideo: {
-          type: Object,
-          value: function() {
-            return {};
-          },
-          notify: true
         }
       },
 
