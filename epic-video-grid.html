@@ -5,10 +5,16 @@
   <template>
     <style>
       :host {
+        display: block;
+        background: transparent;
+      }
+      .header {
+        text-align: center;
+      }
+      .wrapper {
         display: flex;
         flex-flow: row wrap;
         justify-content: flex-start;
-        background: transparent;
       }
       .video {
         border: 1px solid #eee;
@@ -38,17 +44,20 @@
         padding: 1em;
       }
     </style>
-    <template is="dom-repeat" items="{{videos}}">
-      <div class="video">
-        <div class="embed-container">
-          <iframe src="{{item.src}}" allowfullscreen frameborder="0"></iframe>
+    <content></content>
+    <div class="wrapper">
+      <template is="dom-repeat" items="{{videos}}">
+        <div class="video">
+          <div class="embed-container">
+            <iframe src="{{item.src}}" allowfullscreen frameborder="0"></iframe>
+          </div>
+          <div class="details">
+            <h3>{{item.title}}</h3>
+            <marked-element markdown="{{item.description}}"></marked-element>
+          </div>
         </div>
-        <div class="details">
-          <h3>{{item.title}}</h3>
-          <marked-element markdown="{{item.description}}"></marked-element>
-        </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </template>
 
   <script>
