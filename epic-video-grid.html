@@ -49,7 +49,7 @@
       <template is="dom-repeat" items="{{videos}}">
         <div class="video">
           <div class="embed-container">
-            <iframe src="{{item.src}}" allowfullscreen frameborder="0"></iframe>
+            <iframe src="{{item.embedUrl}}" allowfullscreen frameborder="0"></iframe>
           </div>
           <div class="details">
             <h3>{{item.title}}</h3>
