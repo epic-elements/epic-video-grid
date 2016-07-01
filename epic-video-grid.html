@@ -35,6 +35,8 @@
                 overflow: hidden;
                 border: none;
                 margin: 0;
+                font-size: 0;
+                max-height: 100px;
             }
 
             .video.hidden * {
@@ -163,6 +165,12 @@
     </template>
 
     <script>
+        /*
+          TODO: fix timing/bug where the featured video isn't hidden from the epic-video-grid until a change is made
+          TODO: add vimeo thumbnail support
+          TODO: add support for alternate selectedVideo treatment; current hiding (and animating) is the only option
+          TODO: write (better) documentation
+        */
         Polymer({
             is: 'epic-video-grid',
 
@@ -187,16 +195,20 @@
             ],
 
             _selectedVideoChanged: function() {
-                // hide selectedVideo from videos
+                this.hideSelectedVideo();
+            },
 
-                var videoCardListNodeList = document.querySelectorAll('.videoCard'),
+            /**
+                Method to hide the current selected video from the video grid
+            */
+            hideSelectedVideo: function() {
+                var videoCardListNodeList = Polymer.dom(this.root).querySelectorAll('.videoCard'),
                     videoCardList = [];
 
                 // turn videoCardListNodeList into an array so we can use indexOf later
                 for (var i = 0; i < videoCardListNodeList.length; i += 1) {
                     videoCardList.push(videoCardListNodeList[i]);
                 }
-
 
                 if(videoCardListNodeList[this.videos.indexOf(this.selectedVideo)]) {
                     // unhide non selectedVideo
@@ -206,12 +218,10 @@
                     // hide the selectedVideo
                     videoCardListNodeList[this.videos.indexOf(this.selectedVideo)].classList.add('hidden');
                 }
-
-                // videoCardListNodeList[this.videos.indexOf(this.selectedVideo)]
             },
 
-            /*
-              Needs vimeo support
+            /**
+              If a thumbnail is not specified for the video, dynamically generate one to use as the background
             */
             getThumbnailUrl: function(embedUrl) {
 
@@ -235,20 +245,27 @@
                 }
             },
 
-            ready: function() {
+            /**
+              Iterate through all videos and make sure they have a thumbnail
+            */
+            getVideoThumbnails: function() {
                 // get or generate video thumbnails from each video
                 for (var i = 0; i < this.videos.length; i += 1) {
                     if (!this.videos[i].thumbnail) {
                         this.videos[i].thumbnail = this.getThumbnailUrl(this.videos[i].embedUrl);
                     }
                 }
+            },
+
+            ready: function() {
+                this.getVideoThumbnails();
 
                 // click binding on each video to set that video to selectedVideo
                 Polymer.dom(this).node.addEventListener('click', function(e) {
                     /*
                       Needs specific element click support- current uses the whole video card
                     */
-                    // e.preventDefault();
+                    e.preventDefault();
                     if (e.target !== e.currentTarget) {
                         var videoCardListNodeList = document.querySelectorAll('.videoCard'),
                             videoCardList = [];
