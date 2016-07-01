@@ -27,6 +27,62 @@
                 box-sizing: border-box;
             }
 
+            .video .thumbnail {
+                /* 16:9 ratio */
+                padding-bottom: 56.25%;
+                position: relative;
+                background-size: cover;
+                background-position: center center;
+            }
+
+            .video .thumbnail .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, .2);
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: center;
+                align-items: center;
+                transition: .2s ease;
+            }
+
+            .video .thumbnail .overlay:hover {
+                background: rgba(0, 0, 0, .5);
+                transition: .2s ease;
+            }
+
+            .video .thumbnail .overlay a {
+                color: white;
+                text-decoration: none;
+                padding: 1em 2em;
+                display: inline-block;
+                background: #c30;
+                font-size: 1em;
+                transition: .2s ease;
+                text-align: center;
+                border-radius: 1em;
+            }
+
+            .video .thumbnail .overlay a svg {
+                width: 2em;
+                height: auto;
+                margin: 0;
+                display: block;
+            }
+
+            .video .thumbnail .overlay a svg g {
+              fill: white;
+            }
+
+            .video .thumbnail .overlay:hover a {
+                padding: 1.5em 2.5em;
+                background: red;
+                transition: .2s ease;
+            }
+
             .video .embed-container {
                 position: relative;
                 padding-bottom: 56.25%;
@@ -69,10 +125,22 @@
         <content></content>
         <div class="wrapper">
             <template is="dom-repeat" items="[[videos]]">
-                <div class="video">
-                    <div class="embed-container">
+                <div class="video videoCard">
+                    <!-- <div class="embed-container">
                         <iframe src="[[item.embedUrl]]" allowfullscreen frameborder="0"></iframe>
+                    </div> -->
+                    <div class="thumbnail" style="background-image: url([[item.thumbnail]])">
+                        <div class="overlay">
+                            <a href="#">
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;">
+                                    <g>
+                                        <polygon points="0,0 72,36 0,72" />
+                                    </g>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
+
                     <div class="details">
                         <h3>[[item.title]]</h3>
                         <marked-element markdown="[[item.description]]"></marked-element>
@@ -93,10 +161,78 @@
                     value: function() {
                         return [];
                     }
+                },
+                selectedVideo: {
+                    type: Object,
+                    value: function() {
+                        return {};
+                    },
+                    notify: true
+                }
+            },
+
+            /*
+              Needs vimeo support
+            */
+            getThumbnailUrl: function(embedUrl) {
+
+                if (embedUrl) {
+
+                    var thumbnailUrl = '',
+                        // get [1] in match() array because we want the second captured group (the video id)
+                        videoId = embedUrl.match(/(?:\/\/|)www\.youtube\.com\/(?:embed\/|watch\?v\=)([^\?\v$^]+)/i)[1];
+
+                    if (videoId) {
+                        thumbnailUrl = 'http://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                    } else {
+                        // regex error; video ID not found
+                        console.error('video thumbnail generation failed; possibly malformed video url?');
+                    }
+
+                    return thumbnailUrl;
+
+                } else {
+                    return '';
                 }
             },
 
             ready: function() {
+                // get or generate video thumbnails from each video
+                for (var i = 0; i < this.videos.length; i += 1) {
+                    if (!this.videos[i].thumbnail) {
+                        this.videos[i].thumbnail = this.getThumbnailUrl(this.videos[i].embedUrl);
+                    }
+                }
+
+                // click binding on each video to set that video to selectedVideo
+                Polymer.dom(this).node.addEventListener('click', function(e) {
+                  /*
+                    Needs specific element click support- current uses the whole video card
+                  */
+                  if (e.target !== e.currentTarget) {
+                      var videoCardListNodeList = document.querySelectorAll('.videoCard'),
+                          videoCardList = [];
+
+                      // turn videoCardListNodeList into an array so we can use indexOf later
+                      for(var i = 0; i < videoCardListNodeList.length; i += 1) {
+                          videoCardList.push(videoCardListNodeList[i]);
+                      }
+
+                      // move up e.path until a div.video is found
+                      var a = e.target;
+                      while(a !== e.currentTarget && videoCardList.indexOf(a) === -1) {
+                        a = a.parentNode;
+                      }
+
+                      if(videoCardList.indexOf(a) !== -1) {
+                          // we found the videoCard
+                          // use index of that video card to set selectedVideo
+                          // set {{selectedVideo}} to that data. This propogates to parent component.
+                          this.selectedVideo = this.videos[videoCardList.indexOf(a)];
+                      }
+                  }
+                  e.stopPropagation();
+                }, false);
             }
         });
     </script>
