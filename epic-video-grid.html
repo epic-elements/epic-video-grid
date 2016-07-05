@@ -77,7 +77,7 @@
                 text-decoration: none;
                 padding: 1em 2em;
                 display: inline-block;
-                background: rgba(0,0,0,.8);
+                background: rgba(0, 0, 0, .8);
                 font-size: 1em;
                 transition: .2s ease;
                 text-align: center;
@@ -126,26 +126,27 @@
             }
 
             .details h3 {
-              text-align: left;
-              margin: .5em 0;
+                text-align: left;
+                margin: .5em 0;
             }
 
             .details marked-element ::content {
-              text-align: left;
+                text-align: left;
             }
 
             .details a.button {
-              text-transform: uppercase;
-              text-decoration: none;
-              background: #c30;
-              padding: 1em 2em;
-              display: inline-block;
-              color: white;
-              transition: .2s ease;
+                text-transform: uppercase;
+                text-decoration: none;
+                background: #c30;
+                padding: 1em 2em;
+                display: inline-block;
+                color: white;
+                transition: .2s ease;
             }
+
             .details a.button:hover {
-              background: #a52900;
-              transition: .2s ease;
+                background: #a52900;
+                transition: .2s ease;
             }
 
             @media screen and (max-width: 991px) {
@@ -172,7 +173,9 @@
                         <div class="overlay">
                             <a href="#">
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;">
-                                    <g><polygon points="0,0 72,36 0,72" /></g>
+                                    <g>
+                                        <polygon points="0,0 72,36 0,72" />
+                                    </g>
                                 </svg>
                             </a>
                         </div>
@@ -190,9 +193,8 @@
 
     <script>
         /*
-          TODO: add vimeo thumbnail support
+          TODO: fix vimeo thumbnail support
           TODO: write (better) documentation
-          TODO: fix mouseover area
         */
         Polymer({
             is: 'epic-video-grid',
@@ -214,6 +216,7 @@
             },
 
             observers: [
+
             ],
 
             /**
@@ -221,7 +224,6 @@
                 Note the treatment of the selectedVideo can be changed within the .selected css
             */
             hideSelectedVideo: function() {
-
                 var videoCardListNodeList = Polymer.dom(this).node.querySelectorAll('.videoCard'),
                     videoCardList = [];
 
@@ -230,7 +232,7 @@
                     videoCardList.push(videoCardListNodeList[i]);
 
                     // hide the selected video
-                    if( this.videos[i].embedUrl === this.selectedVideo.embedUrl &&
+                    if (this.videos[i].embedUrl === this.selectedVideo.embedUrl &&
                         this.videos[i].title === this.selectedVideo.title
                     ) {
                         videoCardListNodeList[i].classList.add('selected');
@@ -241,24 +243,49 @@
             },
 
             /**
-              If a thumbnail is not specified for the video, dynamically generate one to use as the background
+              Returns the URL of the thumbnail image to use for the video
             */
-            getThumbnailUrl: function(embedUrl) {
-
+            getThumbnailUrl: function(embedUrl, videoNumber) {
                 if (embedUrl) {
 
                     var thumbnailUrl = '',
+                        videoId = '';
+
+                    if (embedUrl.indexOf('youtube.com') !== -1) {
                         // get [1] in match() array because we want the second captured group (the video id)
-                        videoId = embedUrl.match(/(?:\/\/|)www\.youtube\.com\/(?:embed\/|watch\?v\=)([^\?\v$^]+)/i)[1];
-
-                    if (videoId) {
+                        videoId = embedUrl.match(/(?:.?|)youtube\.com\/(?:embed\/|watch\?v\=)([^\?\v$^]+)/i)[1];
                         thumbnailUrl = 'http://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
-                    } else {
-                        // regex error; video ID not found
-                        console.error('video thumbnail generation failed; possibly malformed video url?');
-                    }
+                        return thumbnailUrl;
 
-                    return thumbnailUrl;
+                    } else if (embedUrl.indexOf('vimeo.com') !== -1) {
+
+                        /************************
+
+                        There's currently an issue with rendering thumbnail updates for vimeo. Putting this issue on the backburner for now.
+
+                        ************************/
+
+                        videoId = embedUrl.match(/(?:.?|)vimeo\.com\/(?:video\/|watch\?v\=)([^\?\v$^]+)/i)[1];
+
+                        var jsonUrl = "http://vimeo.com/api/v2/video/" + videoId + ".json";
+
+                        var xmlhttp = new XMLHttpRequest();
+                        xmlhttp.open('GET', jsonUrl, true);
+                        xmlhttp.onreadystatechange = (function() {
+                            if (xmlhttp.readyState == 4) {
+                                if (xmlhttp.status == 200) {
+                                    this.videos[videoNumber].thumbnail = JSON.parse(xmlhttp.responseText)[0].thumbnail_large;
+                                }
+                            }
+                        }).bind(this);
+                        xmlhttp.send(null);
+
+                        // return empty string while the async vimeo request processes
+                        return '';
+
+                    } else {
+                        console.error('video thumbnail generation failed; possibly malformed video url? only youtube and vimeo are currently supported');
+                    }
 
                 } else {
                     return '';
@@ -271,8 +298,9 @@
             getVideoThumbnails: function() {
                 // get or generate video thumbnails from each video
                 for (var i = 0; i < this.videos.length; i += 1) {
+                    // only get thumbnail if not already set
                     if (!this.videos[i].thumbnail) {
-                        this.videos[i].thumbnail = this.getThumbnailUrl(this.videos[i].embedUrl);
+                        this.videos[i].thumbnail =  this.getThumbnailUrl(this.videos[i].embedUrl, i);
                     }
                 }
             },
@@ -282,10 +310,13 @@
 
                 // watch for DOM change (typically the result of this.selectedVideo changing)
                 this.$.videoList.addEventListener('dom-change', (function() {
-                  this.hideSelectedVideo();
+                    this.hideSelectedVideo();
                 }).bind(this));
 
-                // click binding on each video to set that video to selectedVideo
+                /*
+                    click binding on each video to set that video to selectedVideo
+                    note only works when user clicks on the thumbnail (or its children) or the a.button
+                */
                 Polymer.dom(this).node.addEventListener('click', function(e) {
                     e.preventDefault();
                     if (e.target !== e.currentTarget) {
@@ -302,8 +333,8 @@
                             isClickableElement = false;
                         while (a !== e.currentTarget && videoCardList.indexOf(a) === -1) {
                             // only works when user clicks on the thumbnail (or its children) or the a.button
-                            if(a.classList.contains('button') || a.classList.contains('thumbnail')) {
-                              isClickableElement = true;
+                            if (a.classList.contains('button') || a.classList.contains('thumbnail')) {
+                                isClickableElement = true;
                             }
                             a = a.parentNode;
                         }
