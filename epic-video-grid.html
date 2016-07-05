@@ -122,6 +122,30 @@
 
             .details {
                 padding: 1em;
+                text-align: center;
+            }
+
+            .details h3 {
+              text-align: left;
+              margin: .5em 0;
+            }
+
+            .details marked-element ::content {
+              text-align: left;
+            }
+
+            .details a.button {
+              text-transform: uppercase;
+              text-decoration: none;
+              background: #c30;
+              padding: 1em 2em;
+              display: inline-block;
+              color: white;
+              transition: .2s ease;
+            }
+            .details a.button:hover {
+              background: #a52900;
+              transition: .2s ease;
             }
 
             @media screen and (max-width: 991px) {
@@ -157,6 +181,7 @@
                     <div class="details">
                         <h3>[[item.title]]</h3>
                         <marked-element markdown="[[item.description]]"></marked-element>
+                        <a href="#" class="button">Watch Now</a>
                     </div>
                 </div>
             </template>
@@ -262,9 +287,6 @@
 
                 // click binding on each video to set that video to selectedVideo
                 Polymer.dom(this).node.addEventListener('click', function(e) {
-                    /*
-                      Needs specific element click support- current uses the whole video card
-                    */
                     e.preventDefault();
                     if (e.target !== e.currentTarget) {
                         var videoCardListNodeList = document.querySelectorAll('.videoCard'),
@@ -276,12 +298,17 @@
                         }
 
                         // move up e.path until a div.video is found
-                        var a = e.target;
+                        var a = e.target,
+                            isClickableElement = false;
                         while (a !== e.currentTarget && videoCardList.indexOf(a) === -1) {
+                            // only works when user clicks on the thumbnail (or its children) or the a.button
+                            if(a.classList.contains('button') || a.classList.contains('thumbnail')) {
+                              isClickableElement = true;
+                            }
                             a = a.parentNode;
                         }
 
-                        if (videoCardList.indexOf(a) !== -1) {
+                        if (isClickableElement && videoCardList.indexOf(a) !== -1) {
                             // we found the videoCard
                             // use index of that video card to set selectedVideo
                             // set {{selectedVideo}} to that data. This propogates to parent component.
