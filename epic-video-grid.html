@@ -28,7 +28,7 @@
                 transition: .5s ease;
             }
 
-            .video.hidden {
+            .video.selected {
                 flex-basis: 0;
                 transition: .5s ease;
                 transition-delay: .2s;
@@ -39,7 +39,7 @@
                 max-height: 100px;
             }
 
-            .video.hidden * {
+            .video.selected * {
                 opacity: 0;
                 transition: .4s ease;
             }
@@ -69,6 +69,7 @@
             .video .thumbnail .overlay:hover {
                 background: rgba(0, 0, 0, .5);
                 transition: .2s ease;
+                cursor: pointer;
             }
 
             .video .thumbnail .overlay a {
@@ -76,7 +77,7 @@
                 text-decoration: none;
                 padding: 1em 2em;
                 display: inline-block;
-                background: #c30;
+                background: rgba(0,0,0,.8);
                 font-size: 1em;
                 transition: .2s ease;
                 text-align: center;
@@ -95,7 +96,7 @@
             }
 
             .video .thumbnail .overlay:hover a {
-                padding: 1.5em 2.5em;
+                padding: 1.1em 2.2em;
                 background: red;
                 transition: .2s ease;
             }
@@ -141,15 +142,13 @@
         </style>
         <content></content>
         <div class="wrapper">
-            <template is="dom-repeat" items="[[videos]]">
+            <template is="dom-repeat" items="[[videos]]" id="videoList">
                 <div class="video videoCard">
                     <div class="thumbnail" style="background-image: url([[item.thumbnail]])">
                         <div class="overlay">
                             <a href="#">
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;">
-                                    <g>
-                                        <polygon points="0,0 72,36 0,72" />
-                                    </g>
+                                    <g><polygon points="0,0 72,36 0,72" /></g>
                                 </svg>
                             </a>
                         </div>
@@ -166,10 +165,9 @@
 
     <script>
         /*
-          TODO: fix timing/bug where the featured video isn't hidden from the epic-video-grid until a change is made
           TODO: add vimeo thumbnail support
-          TODO: add support for alternate selectedVideo treatment; current hiding (and animating) is the only option
           TODO: write (better) documentation
+          TODO: fix mouseover area
         */
         Polymer({
             is: 'epic-video-grid',
@@ -191,32 +189,29 @@
             },
 
             observers: [
-                '_selectedVideoChanged(selectedVideo)'
             ],
 
-            _selectedVideoChanged: function() {
-                this.hideSelectedVideo();
-            },
-
             /**
-                Method to hide the current selected video from the video grid
+                Method to hide the current selected video from the video grid (adds "selected" class to the .videoCard)
+                Note the treatment of the selectedVideo can be changed within the .selected css
             */
             hideSelectedVideo: function() {
-                var videoCardListNodeList = Polymer.dom(this.root).querySelectorAll('.videoCard'),
+
+                var videoCardListNodeList = Polymer.dom(this).node.querySelectorAll('.videoCard'),
                     videoCardList = [];
 
                 // turn videoCardListNodeList into an array so we can use indexOf later
                 for (var i = 0; i < videoCardListNodeList.length; i += 1) {
                     videoCardList.push(videoCardListNodeList[i]);
-                }
 
-                if(videoCardListNodeList[this.videos.indexOf(this.selectedVideo)]) {
-                    // unhide non selectedVideo
-                    for(var k = 0; k < videoCardListNodeList.length; k += 1) {
-                        videoCardListNodeList[k].classList.remove('hidden');
+                    // hide the selected video
+                    if( this.videos[i].embedUrl === this.selectedVideo.embedUrl &&
+                        this.videos[i].title === this.selectedVideo.title
+                    ) {
+                        videoCardListNodeList[i].classList.add('selected');
+                    } else {
+                        videoCardListNodeList[i].classList.remove('selected');
                     }
-                    // hide the selectedVideo
-                    videoCardListNodeList[this.videos.indexOf(this.selectedVideo)].classList.add('hidden');
                 }
             },
 
@@ -260,6 +255,11 @@
             ready: function() {
                 this.getVideoThumbnails();
 
+                // watch for DOM change (typically the result of this.selectedVideo changing)
+                this.$.videoList.addEventListener('dom-change', (function() {
+                  this.hideSelectedVideo();
+                }).bind(this));
+
                 // click binding on each video to set that video to selectedVideo
                 Polymer.dom(this).node.addEventListener('click', function(e) {
                     /*
@@ -290,7 +290,7 @@
                     }
                     e.stopPropagation();
                 }, false);
-            }
+            },
         });
     </script>
 </dom-module>
