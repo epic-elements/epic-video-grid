@@ -25,23 +25,23 @@
                 flex-basis: 30%;
                 margin: 1.666%;
                 box-sizing: border-box;
-                transition: .5s ease;
+                transition: maxHeight .5s ease;
+                max-height: 750px;
             }
 
             .video.selected {
                 flex-basis: 0;
-                transition: .5s ease;
-                transition-delay: .2s;
                 overflow: hidden;
                 border: none;
                 margin: 0;
                 font-size: 0;
-                max-height: 100px;
+                max-height: 0;
+                opacity: 0;
             }
 
             .video.selected * {
                 opacity: 0;
-                transition: .4s ease;
+                transition: .4s linear;
             }
 
             .video .thumbnail {
@@ -75,17 +75,17 @@
             .video .thumbnail .overlay a {
                 color: white;
                 text-decoration: none;
-                padding: 1em 2em;
+                padding: .75em 1.5em;
                 display: inline-block;
                 background: rgba(0, 0, 0, .8);
                 font-size: 1em;
                 transition: .2s ease;
                 text-align: center;
-                border-radius: 1em;
+                border-radius: .75em;
             }
 
             .video .thumbnail .overlay a svg {
-                width: 2em;
+                width: 1em;
                 height: auto;
                 margin: 0;
                 display: block;
@@ -96,8 +96,8 @@
             }
 
             .video .thumbnail .overlay:hover a {
-                padding: 1.1em 2.2em;
-                background: red;
+                /*padding: 1.5em 2.1em;*/
+                background: #cc181e; /* from youtube */
                 transition: .2s ease;
             }
 
@@ -344,6 +344,9 @@
                             // use index of that video card to set selectedVideo
                             // set {{selectedVideo}} to that data. This propogates to parent component.
                             this.selectedVideo = this.videos[videoCardList.indexOf(a)];
+
+                            var featuredVideoClick = new Event('featuredVideoClick');
+                            this.dispatchEvent(featuredVideoClick);
                         }
                     }
                     e.stopPropagation();
