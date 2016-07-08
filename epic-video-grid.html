@@ -4,221 +4,222 @@
 <dom-module id="epic-video-grid">
     <template>
         <style>
-        :host {
-            display: block;
-            background: transparent;
-        }
+            :host {
+                display: block;
+                background: transparent;
+            }
 
-        .header {
-            text-align: center;
-        }
+            .header {
+                text-align: center;
+            }
 
-        .wrapper {
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-flow: row wrap;
+            .wrapper {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: row wrap;
                 -ms-flex-flow: row wrap;
-                    flex-flow: row wrap;
-            -webkit-justify-content: flex-start;
+                flex-flow: row wrap;
+                -webkit-justify-content: flex-start;
                 -ms-flex-pack: start;
-                    justify-content: flex-start;
-        }
+                justify-content: flex-start;
+            }
 
-        .video {
-            border: 1px solid #eee;
-            display: inline-block;
-            -webkit-flex-basis: 30%;
+            .video {
+                border: 1px solid #eee;
+                display: inline-block;
+                -webkit-flex-basis: 30%;
                 -ms-flex-preferred-size: 30%;
-                    flex-basis: 30%;
-            margin: 1.666%;
-            box-sizing: border-box;
-            transition: maxHeight .5s ease;
-            max-height: 1000px;
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-flow: column nowrap;
+                flex-basis: 30%;
+                margin: 1.666%;
+                box-sizing: border-box;
+                transition: maxHeight .5s ease;
+                max-height: 1000px;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: column nowrap;
                 -ms-flex-flow: column nowrap;
-                    flex-flow: column nowrap;
-            -webkit-justify-content: flex-start;
+                flex-flow: column nowrap;
+                -webkit-justify-content: flex-start;
                 -ms-flex-pack: start;
-                    justify-content: flex-start;
-            -webkit-align-items: stretch;
+                justify-content: flex-start;
+                -webkit-align-items: stretch;
                 -ms-flex-align: stretch;
-                    align-items: stretch;
-        }
+                align-items: stretch;
+            }
 
-        .video.selected {
-            -webkit-flex-basis: 0;
+            .video.selected {
+                -webkit-flex-basis: 0;
                 -ms-flex-preferred-size: 0;
-                    flex-basis: 0;
-            overflow: hidden;
-            border: none;
-            margin: 0;
-            font-size: 0;
-            max-height: 0;
-            opacity: 0;
-        }
+                flex-basis: 0;
+                overflow: hidden;
+                border: none;
+                margin: 0;
+                font-size: 0;
+                max-height: 0;
+                opacity: 0;
+            }
 
-        .video.selected * {
-            opacity: 0;
-            transition: .4s linear;
-        }
+            .video.selected * {
+                opacity: 0;
+                transition: .4s linear;
+            }
 
-        .video .thumbnail {
-            /* 16:9 ratio */
-            padding-bottom: 56.25%;
-            position: relative;
-            background-size: cover;
-            background-position: center center;
-        }
+            .video .thumbnail {
+                /* 16:9 ratio */
+                padding-bottom: 56.25%;
+                position: relative;
+                background-size: cover;
+                background-position: center center;
+            }
 
-        .video .thumbnail .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, .2);
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-flow: row wrap;
+            .video .thumbnail .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, .2);
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: row wrap;
                 -ms-flex-flow: row wrap;
-                    flex-flow: row wrap;
-            -webkit-justify-content: center;
+                flex-flow: row wrap;
+                -webkit-justify-content: center;
                 -ms-flex-pack: center;
-                    justify-content: center;
-            -webkit-align-items: center;
+                justify-content: center;
+                -webkit-align-items: center;
                 -ms-flex-align: center;
-                    align-items: center;
-            transition: .2s ease;
-        }
+                align-items: center;
+                transition: .2s ease;
+            }
 
-        .video .thumbnail .overlay:hover {
-            background: rgba(0, 0, 0, .5);
-            transition: .2s ease;
-            cursor: pointer;
-        }
+            .video .thumbnail .overlay:hover {
+                background: rgba(0, 0, 0, .5);
+                transition: .2s ease;
+                cursor: pointer;
+            }
 
-        .video .thumbnail .overlay a {
-            color: white;
-            text-decoration: none;
-            padding: .75em 1.5em;
-            display: inline-block;
-            background: rgba(0, 0, 0, .8);
-            font-size: 1em;
-            transition: .2s ease;
-            text-align: center;
-            border-radius: .75em;
-        }
+            .video .thumbnail .overlay a {
+                color: white;
+                text-decoration: none;
+                padding: .75em 1.5em;
+                display: inline-block;
+                background: rgba(0, 0, 0, .8);
+                font-size: 1em;
+                transition: .2s ease;
+                text-align: center;
+                border-radius: .75em;
+            }
 
-        .video .thumbnail .overlay a svg {
-            width: 1em;
-            height: 1em;
-            margin: 0;
-            display: block;
-        }
+            .video .thumbnail .overlay a svg {
+                width: 1em;
+                height: 1em;
+                margin: 0;
+                display: block;
+            }
 
-        .video .thumbnail .overlay a svg g {
-            fill: white;
-        }
+            .video .thumbnail .overlay a svg g {
+                fill: white;
+            }
 
-        .video .thumbnail .overlay:hover a {
-            /*padding: 1.5em 2.1em;*/
-            background: #cc181e; /* from youtube */
-            transition: .2s ease;
-        }
+            .video .thumbnail .overlay:hover a {
+                /*padding: 1.5em 2.1em;*/
+                background: #cc181e;
+                /* from youtube */
+                transition: .2s ease;
+            }
 
-        .video .embed-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            width: 100%;
-            margin: 0 auto
-        }
+            .video .embed-container {
+                position: relative;
+                padding-bottom: 56.25%;
+                height: 0;
+                overflow: hidden;
+                width: 100%;
+                margin: 0 auto
+            }
 
-        .embed-container embed,
-        .embed-container iframe,
-        .embed-container object {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%
-        }
+            .embed-container embed,
+            .embed-container iframe,
+            .embed-container object {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%
+            }
 
-        .details {
-            padding: 1em;
-            text-align: center;
-            -webkit-flex: 1 0 auto;
+            .details {
+                padding: 1em;
+                text-align: center;
+                -webkit-flex: 1 0 auto;
                 -ms-flex: 1 0 auto;
-                    flex: 1 0 auto;
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-flex-flow: column nowrap;
+                flex: 1 0 auto;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: column nowrap;
                 -ms-flex-flow: column nowrap;
-                    flex-flow: column nowrap;
-            -webkit-align-items: stretch;
+                flex-flow: column nowrap;
+                -webkit-align-items: stretch;
                 -ms-flex-align: stretch;
-                    align-items: stretch;
-            -webkit-justify-content: space-between;
+                align-items: stretch;
+                -webkit-justify-content: space-between;
                 -ms-flex-pack: justify;
-                    justify-content: space-between;
-        }
+                justify-content: space-between;
+            }
 
-        .details h3 {
-            text-align: left;
-            margin: .5em 0;
-        }
+            .details h3 {
+                text-align: left;
+                margin: .5em 0;
+            }
 
-        .details marked-element ::content {
-            text-align: left;
-            -webkit-flex-grow: 2;
+            .details marked-element ::content {
+                text-align: left;
+                -webkit-flex-grow: 2;
                 -ms-flex-positive: 2;
-                    flex-grow: 2;
-        }
+                flex-grow: 2;
+            }
 
-        .details a.button {
-            text-transform: uppercase;
-            text-decoration: none;
-            background: #c30;
-            padding: 1em 2em;
-            display: inline-block;
-            color: white;
-            transition: .2s ease;
-            -webkit-align-self: center;
+            .details a.button {
+                text-transform: uppercase;
+                text-decoration: none;
+                background: #c30;
+                padding: 1em 2em;
+                display: inline-block;
+                color: white;
+                transition: .2s ease;
+                -webkit-align-self: center;
                 -ms-flex-item-align: center;
-                    align-self: center;
-        }
+                align-self: center;
+            }
 
-        .details a.button:hover {
-            background: #a52900;
-            transition: .2s ease;
-        }
+            .details a.button:hover {
+                background: #a52900;
+                transition: .2s ease;
+            }
 
-        @media screen and (max-width: 991px) {
-            .video {
-                -webkit-flex-basis: 40%;
+            @media screen and (max-width: 991px) {
+                .video {
+                    -webkit-flex-basis: 40%;
                     -ms-flex-preferred-size: 40%;
-                        flex-basis: 40%;
-                margin: 5%;
+                    flex-basis: 40%;
+                    margin: 5%;
+                }
             }
-        }
 
-        @media screen and (max-width: 599px) {
-            .video {
-                -webkit-flex-basis: 90%;
+            @media screen and (max-width: 599px) {
+                .video {
+                    -webkit-flex-basis: 90%;
                     -ms-flex-preferred-size: 90%;
-                        flex-basis: 90%;
+                    flex-basis: 90%;
+                }
+                .video .details marked-element {
+                    display: none;
+                }
             }
-            .video .details marked-element {
-                display: none;
-            }
-        }
         </style>
         <content></content>
         <div class="wrapper">
@@ -227,7 +228,7 @@
                     <div class="thumbnail" style="background-image: url([[item.thumbnail]])">
                         <div class="overlay">
                             <a href="#">
-                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;">
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;" alt="play video">
                                     <g>
                                         <polygon points="0,0 72,36 0,72" />
                                     </g>
@@ -248,19 +249,32 @@
 
     <script>
         /*
+          Polymer <epic-video-grid>
+          Github: https://github.com/epic-elements/epic-video-grid
+          Author: Alex Goodwin (https://github.com/AlexGoodwin)
+
+          NOTE: There is a bug in IE when a user clicks on the SVG play arrow for videos, it doesn't work. This is due to an IE bug where SVG elements don't support element.classList. Since IE usage is so low, I'm leaving this and moving on.
+
+          NOTE: Dynamic Vimeo thumbnails are currently supported. For now, a URL to a blue 480x360px image with "Vimeo" text is returned.
+
           TODO: fix vimeo thumbnail support
-          TODO: write (better) documentation
         */
         Polymer({
             is: 'epic-video-grid',
 
             properties: {
+                /**
+                  An array of video objects, where each object makes up a card in the video grid
+                */
                 videos: {
                     type: Array,
                     value: function() {
                         return [];
                     }
                 },
+                /**
+                  A video object representing the selectedVideo. This is by default hidden from the grid, as the intentio is to display the video in an adjacent component like <epic-video-player>. Note the treatment of the selectedVideo can be changed within the .selected css.
+                */
                 selectedVideo: {
                     type: Object,
                     value: function() {
@@ -270,13 +284,10 @@
                 }
             },
 
-            observers: [
-
-            ],
+            observers: [],
 
             /**
-                Method to hide the current selected video from the video grid (adds "selected" class to the .videoCard)
-                Note the treatment of the selectedVideo can be changed within the .selected css
+                Hide the current selected video from the video grid (adds "selected" class to the .videoCard)
             */
             hideSelectedVideo: function() {
                 var videoCardListNodeList = Polymer.dom(this).node.querySelectorAll('.videoCard'),
@@ -299,6 +310,7 @@
 
             /**
               Returns the URL of the thumbnail image to use for the video
+              Note vimeo returns a default for now (//placehold.it/480x360/1ab7ea/ffffff/?text=Vimeo)
             */
             getThumbnailUrl: function(embedUrl, videoNumber) {
                 if (embedUrl) {
@@ -318,8 +330,6 @@
 
                         There's currently an issue with rendering thumbnail updates for vimeo. Putting this issue on the backburner for now.
 
-                        ************************/
-
                         videoId = embedUrl.match(/(?:.?|)vimeo\.com\/(?:video\/|watch\?v\=)([^\?\v$^]+)/i)[1];
 
                         var jsonUrl = "http://vimeo.com/api/v2/video/" + videoId + ".json";
@@ -335,8 +345,10 @@
                         }).bind(this);
                         xmlhttp.send(null);
 
-                        // return empty string while the async vimeo request processes
-                        return '';
+                        ************************/
+
+                        // return a placeholder for now until proper vimeo support
+                        return '//placehold.it/480x360/1ab7ea/ffffff/?text=Vimeo';
 
                     } else {
                         console.error('video thumbnail generation failed; possibly malformed video url? only youtube and vimeo are currently supported');
@@ -355,7 +367,7 @@
                 for (var i = 0; i < this.videos.length; i += 1) {
                     // only get thumbnail if not already set
                     if (!this.videos[i].thumbnail) {
-                        this.videos[i].thumbnail =  this.getThumbnailUrl(this.videos[i].embedUrl, i);
+                        this.videos[i].thumbnail = this.getThumbnailUrl(this.videos[i].embedUrl, i);
                     }
                 }
             },
@@ -369,8 +381,8 @@
                 }).bind(this));
 
                 /*
-                    click binding on each video to set that video to selectedVideo
-                    note only works when user clicks on the thumbnail (or its children) or the a.button
+                    Click binding on each video to set that video to selectedVideo
+                    Only works when user clicks on the thumbnail (or its children) or the a.button
                 */
                 Polymer.dom(this).node.addEventListener('click', function(e) {
                     e.preventDefault();
