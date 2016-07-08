@@ -4,177 +4,221 @@
 <dom-module id="epic-video-grid">
     <template>
         <style>
-            :host {
-                display: block;
-                background: transparent;
-            }
+        :host {
+            display: block;
+            background: transparent;
+        }
 
-            .header {
-                text-align: center;
-            }
+        .header {
+            text-align: center;
+        }
 
-            .wrapper {
-                display: flex;
-                flex-flow: row wrap;
-                justify-content: flex-start;
-            }
+        .wrapper {
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-flow: row wrap;
+                -ms-flex-flow: row wrap;
+                    flex-flow: row wrap;
+            -webkit-justify-content: flex-start;
+                -ms-flex-pack: start;
+                    justify-content: flex-start;
+        }
 
+        .video {
+            border: 1px solid #eee;
+            display: inline-block;
+            -webkit-flex-basis: 30%;
+                -ms-flex-preferred-size: 30%;
+                    flex-basis: 30%;
+            margin: 1.666%;
+            box-sizing: border-box;
+            transition: maxHeight .5s ease;
+            max-height: 1000px;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-flow: column nowrap;
+                -ms-flex-flow: column nowrap;
+                    flex-flow: column nowrap;
+            -webkit-justify-content: flex-start;
+                -ms-flex-pack: start;
+                    justify-content: flex-start;
+            -webkit-align-items: stretch;
+                -ms-flex-align: stretch;
+                    align-items: stretch;
+        }
+
+        .video.selected {
+            -webkit-flex-basis: 0;
+                -ms-flex-preferred-size: 0;
+                    flex-basis: 0;
+            overflow: hidden;
+            border: none;
+            margin: 0;
+            font-size: 0;
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .video.selected * {
+            opacity: 0;
+            transition: .4s linear;
+        }
+
+        .video .thumbnail {
+            /* 16:9 ratio */
+            padding-bottom: 56.25%;
+            position: relative;
+            background-size: cover;
+            background-position: center center;
+        }
+
+        .video .thumbnail .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .2);
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-flow: row wrap;
+                -ms-flex-flow: row wrap;
+                    flex-flow: row wrap;
+            -webkit-justify-content: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+            -webkit-align-items: center;
+                -ms-flex-align: center;
+                    align-items: center;
+            transition: .2s ease;
+        }
+
+        .video .thumbnail .overlay:hover {
+            background: rgba(0, 0, 0, .5);
+            transition: .2s ease;
+            cursor: pointer;
+        }
+
+        .video .thumbnail .overlay a {
+            color: white;
+            text-decoration: none;
+            padding: .75em 1.5em;
+            display: inline-block;
+            background: rgba(0, 0, 0, .8);
+            font-size: 1em;
+            transition: .2s ease;
+            text-align: center;
+            border-radius: .75em;
+        }
+
+        .video .thumbnail .overlay a svg {
+            width: 1em;
+            height: 1em;
+            margin: 0;
+            display: block;
+        }
+
+        .video .thumbnail .overlay a svg g {
+            fill: white;
+        }
+
+        .video .thumbnail .overlay:hover a {
+            /*padding: 1.5em 2.1em;*/
+            background: #cc181e; /* from youtube */
+            transition: .2s ease;
+        }
+
+        .video .embed-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            width: 100%;
+            margin: 0 auto
+        }
+
+        .embed-container embed,
+        .embed-container iframe,
+        .embed-container object {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .details {
+            padding: 1em;
+            text-align: center;
+            -webkit-flex: 1 0 auto;
+                -ms-flex: 1 0 auto;
+                    flex: 1 0 auto;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-flex-flow: column nowrap;
+                -ms-flex-flow: column nowrap;
+                    flex-flow: column nowrap;
+            -webkit-align-items: stretch;
+                -ms-flex-align: stretch;
+                    align-items: stretch;
+            -webkit-justify-content: space-between;
+                -ms-flex-pack: justify;
+                    justify-content: space-between;
+        }
+
+        .details h3 {
+            text-align: left;
+            margin: .5em 0;
+        }
+
+        .details marked-element ::content {
+            text-align: left;
+            -webkit-flex-grow: 2;
+                -ms-flex-positive: 2;
+                    flex-grow: 2;
+        }
+
+        .details a.button {
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #c30;
+            padding: 1em 2em;
+            display: inline-block;
+            color: white;
+            transition: .2s ease;
+            -webkit-align-self: center;
+                -ms-flex-item-align: center;
+                    align-self: center;
+        }
+
+        .details a.button:hover {
+            background: #a52900;
+            transition: .2s ease;
+        }
+
+        @media screen and (max-width: 991px) {
             .video {
-                border: 1px solid #eee;
-                display: inline-block;
-                flex-basis: 30%;
-                margin: 1.666%;
-                box-sizing: border-box;
-                transition: maxHeight .5s ease;
-                max-height: 1000px;
-                display: flex;
-                flex-flow: column nowrap;
-                justify-content: flex-start;
-                align-items: stretch;
+                -webkit-flex-basis: 40%;
+                    -ms-flex-preferred-size: 40%;
+                        flex-basis: 40%;
+                margin: 5%;
             }
+        }
 
-            .video.selected {
-                flex-basis: 0;
-                overflow: hidden;
-                border: none;
-                margin: 0;
-                font-size: 0;
-                max-height: 0;
-                opacity: 0;
+        @media screen and (max-width: 599px) {
+            .video {
+                -webkit-flex-basis: 90%;
+                    -ms-flex-preferred-size: 90%;
+                        flex-basis: 90%;
             }
-
-            .video.selected * {
-                opacity: 0;
-                transition: .4s linear;
+            .video .details marked-element {
+                display: none;
             }
-
-            .video .thumbnail {
-                /* 16:9 ratio */
-                padding-bottom: 56.25%;
-                position: relative;
-                background-size: cover;
-                background-position: center center;
-            }
-
-            .video .thumbnail .overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, .2);
-                display: flex;
-                flex-flow: row wrap;
-                justify-content: center;
-                align-items: center;
-                transition: .2s ease;
-            }
-
-            .video .thumbnail .overlay:hover {
-                background: rgba(0, 0, 0, .5);
-                transition: .2s ease;
-                cursor: pointer;
-            }
-
-            .video .thumbnail .overlay a {
-                color: white;
-                text-decoration: none;
-                padding: .75em 1.5em;
-                display: inline-block;
-                background: rgba(0, 0, 0, .8);
-                font-size: 1em;
-                transition: .2s ease;
-                text-align: center;
-                border-radius: .75em;
-            }
-
-            .video .thumbnail .overlay a svg {
-                width: 1em;
-                height: auto;
-                margin: 0;
-                display: block;
-            }
-
-            .video .thumbnail .overlay a svg g {
-                fill: white;
-            }
-
-            .video .thumbnail .overlay:hover a {
-                /*padding: 1.5em 2.1em;*/
-                background: #cc181e; /* from youtube */
-                transition: .2s ease;
-            }
-
-            .video .embed-container {
-                position: relative;
-                padding-bottom: 56.25%;
-                height: 0;
-                overflow: hidden;
-                width: 100%;
-                margin: 0 auto
-            }
-
-            .embed-container embed,
-            .embed-container iframe,
-            .embed-container object {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%
-            }
-
-            .details {
-                padding: 1em;
-                text-align: center;
-                flex: 1 0 auto;
-                display: flex;
-                flex-flow: column nowrap;
-                align-items: stretch;
-                justify-content: space-between;
-            }
-
-            .details h3 {
-                text-align: left;
-                margin: .5em 0;
-            }
-
-            .details marked-element ::content {
-                text-align: left;
-                flex-grow: 2;
-            }
-
-            .details a.button {
-                text-transform: uppercase;
-                text-decoration: none;
-                background: #c30;
-                padding: 1em 2em;
-                display: inline-block;
-                color: white;
-                transition: .2s ease;
-                align-self: center;
-            }
-
-            .details a.button:hover {
-                background: #a52900;
-                transition: .2s ease;
-            }
-
-            @media screen and (max-width: 991px) {
-                .video {
-                    flex-basis: 40%;
-                    margin: 5%;
-                }
-            }
-
-            @media screen and (max-width: 599px) {
-                .video {
-                    flex-basis: 90%;
-                }
-                .video .details marked-element {
-                    display: none;
-                }
-            }
+        }
         </style>
         <content></content>
         <div class="wrapper">

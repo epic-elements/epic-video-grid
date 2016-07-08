@@ -1,0 +1,60 @@
+:host {
+    display: block;
+    background: white;
+}
+
+h2 {
+    text-align: center;
+    margin: 0;
+    padding: 1em 0;
+    font-size: 2em;
+    text-transform: uppercase;
+}
+
+.partnerDisplay {
+    display: block;
+    background: white;
+    width: 90%;
+    margin: 0 auto;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: row nowrap;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding-bottom: 3em;
+    max-width: 1080px
+}
+
+.partnerDisplay a {
+    max-width: 20%;
+    padding: 10px;
+    width: 336px;
+    display: inline-block
+}
+
+.partnerDisplay a img {
+    width: 100%;
+    height: 100%
+}
+
+@media screen and (max-width: 768px) {
+    .partnerDisplay {
+        -webkit-flex-flow: column nowrap;
+            -ms-flex-flow: column nowrap;
+                flex-flow: column nowrap;
+    }
+    .partnerDisplay a {
+        width: 90%;
+        max-width: none;
+        margin: 0 auto;
+        padding: 5%;
+        text-align: center;
+    }
+    .partnerDisplay a img {
+      max-width: 200px;
+    }
+}
