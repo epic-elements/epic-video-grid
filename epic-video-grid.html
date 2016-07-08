@@ -27,6 +27,10 @@
                 box-sizing: border-box;
                 transition: maxHeight .5s ease;
                 max-height: 1000px;
+                display: flex;
+                flex-flow: column nowrap;
+                justify-content: flex-start;
+                align-items: stretch;
             }
 
             .video.selected {
@@ -123,6 +127,11 @@
             .details {
                 padding: 1em;
                 text-align: center;
+                flex: 1 0 auto;
+                display: flex;
+                flex-flow: column nowrap;
+                align-items: stretch;
+                justify-content: space-between;
             }
 
             .details h3 {
@@ -132,6 +141,7 @@
 
             .details marked-element ::content {
                 text-align: left;
+                flex-grow: 2;
             }
 
             .details a.button {
@@ -142,6 +152,7 @@
                 display: inline-block;
                 color: white;
                 transition: .2s ease;
+                align-self: center;
             }
 
             .details a.button:hover {
