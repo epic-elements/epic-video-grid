@@ -26,7 +26,7 @@
                 margin: 1.666%;
                 box-sizing: border-box;
                 transition: maxHeight .5s ease;
-                max-height: 750px;
+                max-height: 1000px;
             }
 
             .video.selected {
@@ -254,7 +254,7 @@
                     if (embedUrl.indexOf('youtube.com') !== -1) {
                         // get [1] in match() array because we want the second captured group (the video id)
                         videoId = embedUrl.match(/(?:.?|)youtube\.com\/(?:embed\/|watch\?v\=)([^\?\v$^]+)/i)[1];
-                        thumbnailUrl = 'http://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                        thumbnailUrl = '//img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
                         return thumbnailUrl;
 
                     } else if (embedUrl.indexOf('vimeo.com') !== -1) {
