@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../marked-element/marked-element.html" />
+<link rel="import" href="../marked-element/marked-element.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../epic-card/epic-card.html">
 
 <dom-module id="epic-video-grid">
     <template>
@@ -26,7 +28,6 @@
             }
 
             .video {
-                border: 1px solid #eee;
                 display: inline-block;
                 -webkit-flex-basis: 30%;
                 -ms-flex-preferred-size: 30%;
@@ -114,14 +115,14 @@
                 border-radius: .75em;
             }
 
-            .video .thumbnail .overlay a svg {
+            .video .thumbnail .overlay svg {
                 width: 1em;
                 height: 1em;
                 margin: 0;
                 display: block;
             }
 
-            .video .thumbnail .overlay a svg g {
+            .video .thumbnail .overlay svg g {
                 fill: white;
             }
 
@@ -224,29 +225,51 @@
             }
         </style>
         <content></content>
-        <div class="wrapper">
-            <template is="dom-repeat" items="[[videos]]" id="videoList">
-                <div class="video videoCard">
-                    <div class="thumbnail" style$="background-image: url([[item.thumbnail]])">
+
+
+            <iron-selector class="wrapper" attr-for-selected="name" selected$="[[select]]" selected-item="{{selectedItem}}" selected-class="selected" fallback-selection$="[[videos.0.slug]]" on-iron-activate="handleIronSelectorActivate">
+
+            <template is="dom-repeat" items="[[videos]]" id="videoList" filter="_hasContent">
+
+                <epic-card placeholder="https://images.contentful.com/1kzutnf7jc3r/3NuGgGWb2ggSo0Ks06QISc/2115b37977a817a28cfb65aed3633c43/ecRidesWithZeal.jpeg?w=1"
+                           elevation="1"
+                           image="[[item.thumbnail]]"
+                           name$="[[item.slug]]"
+                           heading="[[item.title]]"
+                           href="[[item.slug]]"
+                           type="video"
+                           fade-image
+                           preload-image>
+                        <div class="content">
+                          <marked-element markdown="[[item.description]]"></marked-element>
+                        </div>
+                        <div class="actions">
+                          <epic-button expand href="[[item.slug]]"  on-tap="handleClick">Watch Now</epic-button>
+                        </div>
+                </epic-card>
+
+
+
+                <!-- <div class="video videoCard" name$="[[item.slug]]">
+                    <a href="[[item.slug]]" class="thumb-link" on-click="handleClick">
+                        <div class="thumbnail" style$="background-image: url([[item.thumbnail]])">
                         <div class="overlay">
-                            <a href="#">
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;" alt="play video">
                                     <g>
                                         <polygon points="0,0 72,36 0,72" />
                                     </g>
                                 </svg>
-                            </a>
                         </div>
                     </div>
-
+                    </a>
                     <div class="details">
                         <h3>[[item.title]]</h3>
                         <marked-element markdown="[[item.description]]"></marked-element>
-                        <a href="#" class="button">Watch Now</a>
+                        <a href="[[item.slug]]" class="button" on-click="handleClick">Watch Now</a>
                     </div>
-                </div>
+                </div> -->
             </template>
-        </div>
+            </iron-selector>
     </template>
 
     <script>
@@ -270,44 +293,65 @@
                 */
                 videos: {
                     type: Array,
+                    notify: true,
                     value: function() {
                         return [];
                     }
                 },
-                /**
-                  A video object representing the selectedVideo. This is by default hidden from the grid, as the intentio is to display the video in an adjacent component like <epic-video-player>. Note the treatment of the selectedVideo can be changed within the .selected css.
-                */
-                selectedVideo: {
-                    type: Object,
-                    value: function() {
-                        return {};
-                    },
-                    notify: true
+
+                select:{
+                    type:String,
+                    notify:true,
+                    value: ''
+                },
+
+                selected:{
+                    type:String,
+                    notify:true,
+                    readOnly: true,
+                    computed: '_computeSelected(selectedItem)'
                 }
             },
 
-            observers: [],
+            observers: [
+                '_observeVideoChanges(videos)',
+                '_observeSelectedItemChanges(select, videos.*)',
+            ],
 
-            /**
-                Hide the current selected video from the video grid (adds "selected" class to the .videoCard)
-            */
-            hideSelectedVideo: function() {
-                var videoCardListNodeList = Polymer.dom(this).node.querySelectorAll('.videoCard'),
-                    videoCardList = [];
+            handleClick: function(e, detail) {
+                this.fire('item-click');
+            },
 
-                // turn videoCardListNodeList into an array so we can use indexOf later
-                for (var i = 0; i < videoCardListNodeList.length; i += 1) {
-                    videoCardList.push(videoCardListNodeList[i]);
+            handleIronSelectorActivate: function(e, detail) {
 
-                    // hide the selected video
-                    if (this.videos[i].embedUrl === this.selectedVideo.embedUrl &&
-                        this.videos[i].title === this.selectedVideo.title
-                    ) {
-                        videoCardListNodeList[i].classList.add('selected');
-                    } else {
-                        videoCardListNodeList[i].classList.remove('selected');
-                    }
+            },
+
+            _observeSelectedItemChanges: function(select, videoChanges){
+
+                if(videoChanges.base.length > 0 && !select){
+                    this.select = videoChanges.base[0].slug;
+                } else {
+                    this.select = select;
                 }
+            },
+
+            _computeSelected(selectedItem) {
+                if(selectedItem) {
+                    return selectedItem.getAttribute('name');
+                }
+            },
+
+            _observeVideoChanges: function(videos) {
+                videos.forEach((function(video, index){
+                        this.set('videos.' + index + '.thumbnail', this.getThumbnailUrl(video.embedUrl, index));
+                }).bind(this));
+            },
+
+            _hasContent: function(item) {
+                        if(item.embedUrl){
+                                    return item;
+                        }
+
             },
 
             /**
@@ -361,66 +405,7 @@
                 }
             },
 
-            /**
-              Iterate through all videos and make sure they have a thumbnail
-            */
-            getVideoThumbnails: function() {
-                // get or generate video thumbnails from each video
-                for (var i = 0; i < this.videos.length; i += 1) {
-                    // only get thumbnail if not already set
-                    if (!this.videos[i].thumbnail) {
-                        this.videos[i].thumbnail = this.getThumbnailUrl(this.videos[i].embedUrl, i);
-                    }
-                }
-            },
-
-            ready: function() {
-                this.getVideoThumbnails();
-
-                // watch for DOM change (typically the result of this.selectedVideo changing)
-                this.$.videoList.addEventListener('dom-change', (function() {
-                    this.hideSelectedVideo();
-                }).bind(this));
-
-                /*
-                    Click binding on each video to set that video to selectedVideo
-                    Only works when user clicks on the thumbnail (or its children) or the a.button
-                */
-                Polymer.dom(this).node.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (e.target !== e.currentTarget) {
-                        var videoCardListNodeList = document.querySelectorAll('.videoCard'),
-                            videoCardList = [];
-
-                        // turn videoCardListNodeList into an array so we can use indexOf later
-                        for (var i = 0; i < videoCardListNodeList.length; i += 1) {
-                            videoCardList.push(videoCardListNodeList[i]);
-                        }
-
-                        // move up e.path until a div.video is found
-                        var a = e.target,
-                            isClickableElement = false;
-                        while (a !== e.currentTarget && videoCardList.indexOf(a) === -1) {
-                            // only works when user clicks on the thumbnail (or its children) or the a.button
-                            if (a.classList.contains('button') || a.classList.contains('thumbnail')) {
-                                isClickableElement = true;
-                            }
-                            a = a.parentNode;
-                        }
-
-                        if (isClickableElement && videoCardList.indexOf(a) !== -1) {
-                            // we found the videoCard
-                            // use index of that video card to set selectedVideo
-                            // set {{selectedVideo}} to that data. This propogates to parent component.
-                            this.selectedVideo = this.videos[videoCardList.indexOf(a)];
-
-                            var featuredVideoClick = new Event('featuredVideoClick');
-                            this.dispatchEvent(featuredVideoClick);
-                        }
-                    }
-                    e.stopPropagation();
-                }, false);
-            },
+            ready: function() {},
         });
     </script>
 </dom-module>
