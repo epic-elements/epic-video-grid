@@ -5,7 +5,9 @@
     "polymer": "Polymer/polymer#^1.4.0",
     "marked-element": "PolymerElements/marked-element#^1.1.3",
     "epic-card": "epic-elements/epic-card",
-    "epic-styles": "epic-elements/epic-styles"
+    "epic-styles": "epic-elements/epic-styles",
+    "app-layout": "PolymerElements/app-layout#^0.10.1",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

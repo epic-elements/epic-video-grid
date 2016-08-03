@@ -1,275 +1,78 @@
 <link rel="import" href="../polymer/polymer.html">
+<!-- Iron Elements -->
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../marked-element/marked-element.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../epic-card/epic-card.html">
+<link rel="import" href="../epic-styles/epic-styles.html">
+
+<!-- App Elements -->
+<link rel="import" href="../app-layout/app-grid/app-grid-style.html">
+<!-- <link rel="import" href="../epic-container/epic-container.html"> -->
+
 
 <dom-module id="epic-video-grid">
     <template>
-        <style>
+        <style include="app-grid-style"></style>
+        <style include="epic-styles">
             :host {
+                --app-grid-columns: 1;
+                --app-grid-gutter: calc(var(--epic-baseline)/2);
                 display: block;
                 background: transparent;
-            }
-
-            .header {
-                text-align: center;
-            }
-
-            .wrapper {
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
-                -webkit-flex-flow: row wrap;
-                -ms-flex-flow: row wrap;
-                flex-flow: row wrap;
-                -webkit-justify-content: flex-start;
-                -ms-flex-pack: start;
-                justify-content: flex-start;
-            }
-
-            .video {
-                display: inline-block;
-                -webkit-flex-basis: 30%;
-                -ms-flex-preferred-size: 30%;
-                flex-basis: 30%;
-                margin: 1.666%;
+                position: relative;
                 box-sizing: border-box;
-                transition: maxHeight .5s ease;
-                max-height: 1000px;
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
-                -webkit-flex-flow: column nowrap;
-                -ms-flex-flow: column nowrap;
-                flex-flow: column nowrap;
-                -webkit-justify-content: flex-start;
-                -ms-flex-pack: start;
-                justify-content: flex-start;
-                -webkit-align-items: stretch;
-                -ms-flex-align: stretch;
-                align-items: stretch;
             }
 
-            .video.selected {
-                -webkit-flex-basis: 0;
-                -ms-flex-preferred-size: 0;
-                flex-basis: 0;
-                overflow: hidden;
-                border: none;
-                margin: 0;
-                font-size: 0;
-                max-height: 0;
-                opacity: 0;
-            }
-
-            .video.selected * {
-                opacity: 0;
-                transition: .4s linear;
-            }
-
-            .video .thumbnail {
-                /* 16:9 ratio */
-                padding-bottom: 56.25%;
-                position: relative;
-                background-size: cover;
-                background-position: center center;
-            }
-
-            .video .thumbnail .overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, .2);
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
-                -webkit-flex-flow: row wrap;
-                -ms-flex-flow: row wrap;
-                flex-flow: row wrap;
-                -webkit-justify-content: center;
-                -ms-flex-pack: center;
-                justify-content: center;
-                -webkit-align-items: center;
-                -ms-flex-align: center;
-                align-items: center;
-                transition: .2s ease;
-            }
-
-            .video .thumbnail .overlay:hover {
-                background: rgba(0, 0, 0, .5);
-                transition: .2s ease;
-                cursor: pointer;
-            }
-
-            .video .thumbnail .overlay a {
-                color: white;
-                text-decoration: none;
-                padding: .75em 1.5em;
-                display: inline-block;
-                background: rgba(0, 0, 0, .8);
-                font-size: 1em;
-                transition: .2s ease;
-                text-align: center;
-                border-radius: .75em;
-            }
-
-            .video .thumbnail .overlay svg {
-                width: 1em;
-                height: 1em;
-                margin: 0;
-                display: block;
-            }
-
-            .video .thumbnail .overlay svg g {
-                fill: white;
-            }
-
-            .video .thumbnail .overlay:hover a {
-                /*padding: 1.5em 2.1em;*/
-                background: #cc181e;
-                /* from youtube */
-                transition: .2s ease;
-            }
-
-            .video .embed-container {
-                position: relative;
-                padding-bottom: 56.25%;
-                height: 0;
-                overflow: hidden;
-                width: 100%;
-                margin: 0 auto
-            }
-
-            .embed-container embed,
-            .embed-container iframe,
-            .embed-container object {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%
-            }
-
-            .details {
-                padding: 1em;
-                text-align: center;
-                -webkit-flex: 1 0 auto;
-                -ms-flex: 1 0 auto;
-                flex: 1 0 auto;
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
-                -webkit-flex-flow: column nowrap;
-                -ms-flex-flow: column nowrap;
-                flex-flow: column nowrap;
-                -webkit-align-items: stretch;
-                -ms-flex-align: stretch;
-                align-items: stretch;
-                -webkit-justify-content: space-between;
-                -ms-flex-pack: justify;
-                justify-content: space-between;
-            }
-
-            .details h3 {
-                text-align: left;
-                margin: .5em 0;
-            }
-
-            .details marked-element ::content {
-                text-align: left;
-                -webkit-flex-grow: 2;
-                -ms-flex-positive: 2;
-                flex-grow: 2;
-            }
-
-            .details a.button {
-                text-transform: uppercase;
-                text-decoration: none;
-                background: #c30;
-                padding: 1em 2em;
-                display: inline-block;
-                color: white;
-                font-weight: bold;
-                transition: .2s ease;
-                -webkit-align-self: center;
-                -ms-flex-item-align: center;
-                align-self: center;
-            }
-
-            .details a.button:hover {
-                background: #a52900;
-                transition: .2s ease;
-            }
-
-            @media screen and (max-width: 991px) {
-                .video {
-                    -webkit-flex-basis: auto;
-                    -ms-flex-preferred-size: auto;
-                    flex-basis: auto;
-                    width: 40%;
-                    margin: 5%;
+            @media (min-width: 480px) {
+                :host {
+                    --app-grid-columns: 2;
                 }
             }
 
-            @media screen and (max-width: 599px) {
-                .video {
-                    -webkit-flex-basis: 90%;
-                    -ms-flex-preferred-size: 90%;
-                    flex-basis: 90%;
+            @media (min-width: 840px) {
+                :host {
+                    --app-grid-gutter: var(--epic-baseline);
                 }
-                .video .details marked-element {
-                    display: none;
+            }
+            @media (min-width: 1280px) {
+                :host {
+                    --app-grid-columns: 3;
+                }
+            }
+            @media (min-width: 1440px) {
+                :host {
+                    --app-grid-columns: 4;
                 }
             }
         </style>
-        <content></content>
 
+        <epic-container contain collapse-padding elevation="0">
+        <iron-selector class="app-grid" selected="[[selected]]" selected-item="{{selectedItem}}" selected-class="selected" fallback-selection="0" on-iron-activate="handleIronSelectorActivate">
 
-            <iron-selector class="wrapper" attr-for-selected="name" selected$="[[select]]" selected-item="{{selectedItem}}" selected-class="selected" fallback-selection$="[[videos.0.slug]]" on-iron-activate="handleIronSelectorActivate">
+            <template is="dom-repeat" items="[[videos]]" id="videoList">
 
-            <template is="dom-repeat" items="[[videos]]" id="videoList" filter="_hasContent">
+             <epic-card placeholder="https://images.contentful.com/1kzutnf7jc3r/3NuGgGWb2ggSo0Ks06QISc/2115b37977a817a28cfb65aed3633c43/ecRidesWithZeal.jpeg?w=1"
+                        elevation="1"
+                        video="[[item.fields.embedUrl]]"
+                        name="[[item.fields.slug]]"
+                        heading="[[item.fields.title]]"
+                        href="[[item.fields.slug]]"
+                        type="video"
+                        fade-image
+                        preload-image
+                        class="item">
+                     <div content>[[item.fields.summary]]</div>
+                     <div actions>
+                       <epic-button expand href="[[item.fields.slug]]" on-tap="handleClick">Watch Now</epic-button>
+                     </div>
+             </epic-card>
 
-                <epic-card placeholder="https://images.contentful.com/1kzutnf7jc3r/3NuGgGWb2ggSo0Ks06QISc/2115b37977a817a28cfb65aed3633c43/ecRidesWithZeal.jpeg?w=1"
-                           elevation="1"
-                           image="[[item.thumbnail]]"
-                           name$="[[item.slug]]"
-                           heading="[[item.title]]"
-                           href="[[item.slug]]"
-                           type="video"
-                           fade-image
-                           preload-image>
-                        <div class="content">
-                          <marked-element markdown="[[item.description]]"></marked-element>
-                        </div>
-                        <div class="actions">
-                          <epic-button expand href="[[item.slug]]"  on-tap="handleClick">Watch Now</epic-button>
-                        </div>
-                </epic-card>
-
-
-
-                <!-- <div class="video videoCard" name$="[[item.slug]]">
-                    <a href="[[item.slug]]" class="thumb-link" on-click="handleClick">
-                        <div class="thumbnail" style$="background-image: url([[item.thumbnail]])">
-                        <div class="overlay">
-                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewbox="0 0 72 72" style="enable-background:new 0 0 72 72;" alt="play video">
-                                    <g>
-                                        <polygon points="0,0 72,36 0,72" />
-                                    </g>
-                                </svg>
-                        </div>
-                    </div>
-                    </a>
-                    <div class="details">
-                        <h3>[[item.title]]</h3>
-                        <marked-element markdown="[[item.description]]"></marked-element>
-                        <a href="[[item.slug]]" class="button" on-click="handleClick">Watch Now</a>
-                    </div>
-                </div> -->
             </template>
+        
+
             </iron-selector>
+            </epic-container>
     </template>
 
     <script>
@@ -299,52 +102,41 @@
                     }
                 },
 
-                select:{
+                selected:{
                     type:String,
                     notify:true,
                     value: ''
                 },
 
-                selected:{
-                    type:String,
+                selectedItem:{
+                    type:Object,
                     notify:true,
-                    readOnly: true,
-                    computed: '_computeSelected(selectedItem)'
+                    observer:'selectedItem()'
                 }
             },
 
             observers: [
-                '_observeVideoChanges(videos)',
-                '_observeSelectedItemChanges(select, videos.*)',
+                // '_observeVideoChanges(videos)',
+                // '_observeSelectedItemChanges(select, videos.*)',
             ],
 
             handleClick: function(e, detail) {
                 this.fire('item-click');
             },
 
-            handleIronSelectorActivate: function(e, detail) {
-
-            },
-
-            _observeSelectedItemChanges: function(select, videoChanges){
-
-                if(videoChanges.base.length > 0 && !select){
-                    this.select = videoChanges.base[0].slug;
-                } else {
-                    this.select = select;
-                }
-            },
+            // _observeSelectedItemChanges: function(select, videoChanges){
+            //
+            //     if(videoChanges.base.length > 0 && !select){
+            //         this.select = videoChanges.base[0].slug;
+            //     } else {
+            //         this.select = select;
+            //     }
+            // },
 
             _computeSelected(selectedItem) {
                 if(selectedItem) {
                     return selectedItem.getAttribute('name');
                 }
-            },
-
-            _observeVideoChanges: function(videos) {
-                videos.forEach((function(video, index){
-                        this.set('videos.' + index + '.thumbnail', this.getThumbnailUrl(video.embedUrl, index));
-                }).bind(this));
             },
 
             _hasContent: function(item) {
@@ -405,7 +197,187 @@
                 }
             },
 
-            ready: function() {},
+            ready: function() {
+
+                this.videos = [
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "1kzutnf7jc3r"
+        }
+      },
+      "id": "6RYEb6EGrYuaau8i82gwu8",
+      "type": "Entry",
+      "createdAt": "2016-08-03T01:30:30.187Z",
+      "updatedAt": "2016-08-03T06:57:19.709Z",
+      "revision": 5,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "video"
+        }
+      },
+      "locale": "en-US"
+    },
+    "fields": {
+      "title": "The Road To Woodward - Episode 1",
+      "slug": "road-to-woodward-1",
+      "summary": "Stoke is heating up in the Colorado high country as fun was shared by all this week at Woodward at Copper.",
+      "details": "Stoke is heating up in the Colorado high country as fun was shared by all this week at Woodward at Copper. This summer, our events crew met up with ZEAL riders Mike Sears and Brolin Mawejje at Copper Moutain’s Pipeline Park for some much anticipated summer shred. Watch the gang stick trick after trick and hone their moves outdoors and in with some elevated trampoline time. Rest assured, no pillowcase went un-tie died as the fun continued from sun up to sun down.",
+      "embedUrl": "https://www.youtube.com/embed/-Kt2JaYFpVQ",
+      "tags": [
+        "woodward",
+        "snow",
+        "snowboarding",
+        "events",
+        "tahoe",
+        "brolin mawejje",
+        "mike sears",
+        "lake tahoe",
+        "summer camp",
+        "road trip",
+        "ambassadors"
+      ]
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "1kzutnf7jc3r"
+        }
+      },
+      "id": "4vEPT9iFcAoO2OeEQeSaEE",
+      "type": "Entry",
+      "createdAt": "2016-08-03T11:35:17.161Z",
+      "updatedAt": "2016-08-03T11:35:17.161Z",
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "video"
+        }
+      },
+      "locale": "en-US"
+    },
+    "fields": {
+      "title": "The Road To Woodward - Episode 2",
+      "slug": "road-to-woodward-2",
+      "summary": "With ZEAL Week at Copper coming to a close, the ZEAL crew hops on the loneliest highway in America due west...",
+      "details": "With ZEAL Week at Copper coming to a close, the ZEAL crew hops on the loneliest highway in America due west, but not before experiencing some near misses on the slopes, cold nights under the stars, company of old and new friends and the passion of the next generation. Check out the latest installment of ZEAL Optics Road to Woodward and come explore more with us as we quest west to Tahoe!",
+      "embedUrl": "https://www.youtube.com/embed/kbXGgzgVz9g",
+      "tags": [
+        "woodward",
+        "snow",
+        "snowboarding",
+        "events",
+        "tahoe",
+        "brolin mawejje",
+        "mike sears",
+        "lake tahoe",
+        "summer camp",
+        "road trip",
+        "ambassadors"
+      ]
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "1kzutnf7jc3r"
+        }
+      },
+      "id": "1PagCmo1yoO4oSqGkm844q",
+      "type": "Entry",
+      "createdAt": "2016-08-03T11:41:23.069Z",
+      "updatedAt": "2016-08-03T11:41:23.070Z",
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "video"
+        }
+      },
+      "locale": "en-US"
+    },
+    "fields": {
+      "title": "The Road To Woodward - The Brolin Mawejje Files",
+      "slug": "the-road-to-woodward-the-brolin-mawejje-files",
+      "summary": "Hit the road with Brolin Mawejje as he chases the stoke from ZEAL Week at Woodward at Copper to the encore mayhem of Woodward Tahoe''s ZEAL Week! ",
+      "details ": "Hit the road with Brolin Mawejje as he chases the stoke from ZEAL Week at Woodward at Copper to the encore mayhem of Woodward Tahoe''s ZEAL Week! Brolin followed Zeal Optics weeks @ both Woodward Copper (6/12-6/18) and Woodward Tahoe (6/19-6/25) in search of sunshine, snow and good old fashioned camp fun. Additional Appearances by Josiah Goedecke, Madison Ellsworth, Ryan Riggins, Jamie Normandin and campers.",
+      "embedUrl": "https://www.youtube.com/embed/rijK3RDRPXk",
+      "tags": [
+        "woodward",
+        "snow",
+        "snowboarding",
+        "events",
+        "tahoe",
+        "brolin mawejje",
+        "mike sears",
+        "lake tahoe",
+        "summer camp",
+        "road trip",
+        "ambassadors"
+      ]
+    }
+  },
+  {
+    "sys": {
+      "space": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Space",
+          "id": "1kzutnf7jc3r"
+        }
+      },
+      "id": "4wDU10hofSwIKsCMiy6KQW",
+      "type": "Entry",
+      "createdAt": "2016-08-03T11:36:57.146Z",
+      "updatedAt": "2016-08-03T11:36:57.146Z",
+      "revision": 1,
+      "contentType": {
+        "sys": {
+          "type": "Link",
+          "linkType": "ContentType",
+          "id": "video"
+        }
+      },
+      "locale": "en-US"
+    },
+    "fields": {
+      "title": "The Road To Woodward - Episode 3",
+      "slug": "road-to-woodward-3",
+      "summary": "Our intrepid events crew making there way west navigating dauntingly straight roads, deserted ghost towns and the biggest little city in the world they finally arrive at their final destination; Woodward Tahoe.",
+      "details": "With our intrepid events crew making there way west navigating dauntingly straight roads, deserted ghost towns and the biggest little city in the world they finally arrive at their final destination; Woodward Tahoe. Utilizing a demonic snow making machine that produces snow at any ambient temperature the ZEAL team didn’t hesitate to throw down. With a day off the snow the crew migrated towards Lake Tahoe to go explore the surroundings and catch some of the favorite local digs. Feeling clean and energized to finish the week off strong we head back to camp and gear up for what the final days hold. Follow along and stay tuned for the last installment of the Road to Woodward. ",
+      "embedUrl": "https://www.youtube.com/embed/rhIOtdKYBUE",
+      "tags": [
+        "woodward",
+        "snow",
+        "snowboarding",
+        "events",
+        "tahoe",
+        "brolin mawejje",
+        "mike sears",
+        "lake tahoe",
+        "summer camp",
+        "road trip",
+        "ambassadors"
+      ]
+    }
+  }
+];
+            },
         });
     </script>
 </dom-module>
