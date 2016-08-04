@@ -48,7 +48,7 @@
         </style>
 
         <epic-container contain collapse-padding elevation="0">
-        <iron-selector class="app-grid" selected="[[selected]]" selected-item="{{selectedItem}}" selected-class="selected" fallback-selection="0" on-iron-activate="handleIronSelectorActivate">
+        <iron-selector class="app-grid" selected="{{selected}}" selected-item="{{selectedItem}}" selected-class="selected" fallback-selection="0" on-iron-activate="handleIronSelectorActivate">
 
             <template is="dom-repeat" items="[[videos]]" id="videoList">
 
@@ -110,8 +110,7 @@
 
                 selectedItem:{
                     type:Object,
-                    notify:true,
-                    observer:'selectedItem()'
+                    notify:true
                 }
             },
 
